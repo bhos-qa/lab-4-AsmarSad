@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - feature/*
+      - feature/lab4
   pull_request:
     branches:
       - develop
@@ -37,5 +37,13 @@ jobs:
       - name: Run tests with Jacoco
         run: ./gradlew test jacocoTestReport
 
-      - name: Upload Jacoco code coverage and run SonarCloud analysis
-        run: ./gradlew sonarqube -Dsonar.projectKey=bhos-qa_lab-3-AsmarSad -Dsonar.organization=bhos-qa -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+            args: >
+              -Dsonar.projectKey=bhos-qa_lab-4-AsmarSad
+              -Dsonar.organization=bhos-qa
+              -Dsonar.host.url=https://sonarcloud.io
+              -Dsonar.java.binaries=build/classes/java/main
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
