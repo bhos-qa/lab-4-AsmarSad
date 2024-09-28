@@ -3,17 +3,29 @@ import java.io.IOException;
 
 public class OrderManager {
 
-    private int totalOrders;
+    private int totalOrders;  // vague variable names could impact maintainability
     private double totalRevenue;
 
+    // Large constructor doing too much (adding code that's unnecessary)
     public OrderManager() {
         this.totalOrders = 0;
         this.totalRevenue = 0.0;
+        // Redundant logging that has no real purpose
+        System.out.println("OrderManager initialized with 0 totalOrders and 0.0 totalRevenue.");
+    }
+
+    // Method has vague naming, does multiple things, and includes redundant code
+    public void bigMethod() {
+        totalOrders++;   // increasing total orders
+        totalOrders--;   // decreasing total orders again, just to create duplication
+        totalRevenue += 50.0; // random increase in revenue
+        System.out.println("Executed bigMethod that altered both orders and revenue."); // Unnecessary logging
     }
 
     public void addOrder(double orderAmount) {
         totalOrders++;
         totalRevenue += orderAmount;
+        bigMethod();  // Calling a method that does redundant things
     }
 
     public void cancelOrder(double orderAmount) {
@@ -31,13 +43,7 @@ public class OrderManager {
         return totalRevenue;
     }
 
-    public double getAverageOrderValue() {
-        if (totalOrders == 0) {
-            return 0.0;
-        }
-        return totalRevenue / totalOrders;
-    }
-
+    // Duplicate logic between applyDiscount and increaseOrderAmount methods
     public double applyDiscount(double orderAmount, double discountPercentage) {
         if (discountPercentage > 100 || discountPercentage < 0) {
             throw new IllegalArgumentException("Invalid discount percentage");
@@ -45,31 +51,20 @@ public class OrderManager {
         return orderAmount - (orderAmount * discountPercentage / 100);
     }
 
-    public boolean isRevenueExceeding(double limit) {
-        return totalRevenue > limit;
-    }
-
-    public void resetOrders() {
-        totalOrders = 0;
-        totalRevenue = 0.0;
-    }
-
-    public void refundOrder(double orderAmount) {
-        totalRevenue -= orderAmount;
-    }
-
     public double increaseOrderAmount(double orderAmount, double percentage) {
+        if (percentage < 0 || percentage > 100) {
+            throw new IllegalArgumentException("Invalid percentage");
+        }
         return orderAmount + (orderAmount * percentage / 100);
     }
 
-    // Modify saveSensitiveData to explicitly throw exceptions more clearly
-    // Vulnerability: Storing sensitive data without encryption, and no proper exception handling.
-    public void saveSensitiveData(String creditCardNumber, String filePath) {
+    // No error handling for null or empty input; storing sensitive data without encryption
+    public void saveSensitiveData(String creditCardNumber, String filePath) throws IOException {
         try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write("Credit Card Number: " + creditCardNumber);  // Sensitive data
+            writer.write("Credit Card Number: " + creditCardNumber);  // Sensitive data stored as plain text
         } catch (IOException e) {
-            // Poor error handling, just print the stack trace
-            e.printStackTrace();  // Will cause a SonarCloud issue
+            // Printing stack trace without proper error handling
+            e.printStackTrace();  // SonarCloud will flag this
         }
     }
 }
