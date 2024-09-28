@@ -1,0 +1,49 @@
+name: CI - Asmar Sadikhova
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/lab4
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v1
+        with:
+          java-version: '21'
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Run tests with Jacoco
+        run: ./gradlew test jacocoTestReport
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+            args: >
+              -Dsonar.projectKey=bhos-qa_lab-4-AsmarSad
+              -Dsonar.organization=bhos-qa
+              -Dsonar.host.url=https://sonarcloud.io
+              -Dsonar.java.binaries=build/classes/java/main
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
