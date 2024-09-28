@@ -26,15 +26,18 @@ public class OrderManager {
     public int getTotalOrders() {
         return totalOrders;
     }
+
     public double getTotalRevenue() {
         return totalRevenue;
     }
+
     public double getAverageOrderValue() {
         if (totalOrders == 0) {
             return 0.0;
         }
         return totalRevenue / totalOrders;
     }
+
     public double applyDiscount(double orderAmount, double discountPercentage) {
         if (discountPercentage > 100 || discountPercentage < 0) {
             throw new IllegalArgumentException("Invalid discount percentage");
@@ -58,11 +61,14 @@ public class OrderManager {
     public double increaseOrderAmount(double orderAmount, double percentage) {
         return orderAmount + (orderAmount * percentage / 100);
     }
+
+    // Vulnerability: Storing sensitive data without encryption, and no proper exception handling.
     public void saveSensitiveData(String creditCardNumber, String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write("Credit Card Number: " + creditCardNumber);
+            writer.write("Credit Card Number: " + creditCardNumber);  // Sensitive data
         } catch (IOException e) {
-            e.printStackTrace();
+            // Poor error handling, just print the stack trace
+            e.printStackTrace();  // Will cause a SonarCloud issue
         }
     }
 }
