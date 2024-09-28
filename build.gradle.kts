@@ -1,46 +1,43 @@
 plugins {
     id("java")
     id("jacoco")
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "4.0.0.2929"
 }
 
-group = "com.example"
+group = "org.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-}
 
-tasks.test {
-    useJUnitPlatform()
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.7" // Make sure the Jacoco version is correct
 }
 
 tasks.jacocoTestReport {
     reports {
-        xml.required.set(true)  // Generates XML report required by SonarCloud
-        csv.required.set(false)
-        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))  // Generates HTML for manual viewing
+        xml.required.set(true)  // Generate XML report for SonarCloud
+        html.required.set(true) // Generate HTML report for local browsing
     }
 }
 
+// Ensure Jacoco reports are generated after tests
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // Run jacocoTestReport after test
+}
 sonarqube {
     properties {
-        property("sonar.projectKey", "bhos-qa_lab-4-AsmarSad")  // Replace with your SonarCloud project key
-        property("sonar.organization", "bhos-qa")               // Replace with your SonarCloud organization key
+        property ("sonar.projectKey", "bhos-qa_lab-3-AsmarSad")
+        property( "sonar.organization", "bhos-qa")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))   // Uses SONAR_TOKEN from environment variables
+        property("sonar.login", project.findProperty("sonar.login") ?: "")
     }
-}
-
-tasks.wrapper {
-    gradleVersion = "7.2"
 }
