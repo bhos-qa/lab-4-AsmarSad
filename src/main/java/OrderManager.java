@@ -63,12 +63,13 @@ public class OrderManager {
     }
 
     // Modify saveSensitiveData to explicitly throw exceptions more clearly
-    public void saveSensitiveData(String creditCardNumber, String filePath) throws IOException {
-        if (creditCardNumber == null || creditCardNumber.isEmpty()) {
-            throw new IllegalArgumentException("Invalid credit card number");
-        }
+    // Vulnerability: Storing sensitive data without encryption, and no proper exception handling.
+    public void saveSensitiveData(String creditCardNumber, String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write("Credit Card Number: " + creditCardNumber);  // Sensitive data
+        } catch (IOException e) {
+            // Poor error handling, just print the stack trace
+            e.printStackTrace();  // Will cause a SonarCloud issue
         }
     }
 }
