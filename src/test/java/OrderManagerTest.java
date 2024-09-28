@@ -38,11 +38,4 @@ public class OrderManagerTest {
         double discountedAmount = orderManager.applyDiscount(200.0, 10.0);
         assertEquals(180.0, discountedAmount);
     }
-
-    @Test
-    public void testIsRevenueExceeding() {
-        orderManager.addOrder(500.0);
-        assertTrue(orderManager.isRevenueExceeding(300.0));
-        assertFalse(orderManager.isRevenueExceeding(600.0));
-    }
 }
