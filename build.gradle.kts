@@ -38,6 +38,5 @@ sonarqube {
         property ("sonar.projectKey", "bhos-qa_lab-3-AsmarSad")
         property( "sonar.organization", "bhos-qa")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", project.findProperty("sonar.login") ?: "")
     }
 }
